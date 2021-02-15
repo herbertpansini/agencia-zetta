@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.2.xsd
+      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.2.xsd">
+    <changeSet author="herbert" id="3">
+        <sql>
+            CREATE TABLE usuario (
+                id serial PRIMARY KEY NOT NULL,
+                nome varchar(255) NOT NULL,
+                cpf varchar(11) UNIQUE NOT NULL,
+                data_nascimento DATE,
+                sexo CHAR(1),
+                cargo INT NOT NULL,
+                FOREIGN KEY (cargo) REFERENCES cargo (id)
+            )
+        </sql>
+    </changeSet>
+</databaseChangeLog>

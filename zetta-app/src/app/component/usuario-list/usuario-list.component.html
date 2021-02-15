@@ -1,0 +1,79 @@
+<p-toast></p-toast>
+
+<div class="card">
+    <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left">
+            <button pButton pRipple label="Adicionar novo usuário" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="openNew()"></button>
+        </ng-template>
+    </p-toolbar>
+
+    <p-table #dt [value]="usuarios" [rows]="10" [paginator]="true" [columns]="colunas"
+        [rowHover]="true" dataKey="codigo" [totalRecords]="totalRecords" responsive="true"
+        [lazy]="true" (onLazyLoad)="loadUsuariosByPage($event)"
+        currentPageReportTemplate="Exibindo {first} à {last} de {totalRecords} registro(s)" [showCurrentPageReport]="true">
+        <ng-template pTemplate="caption">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                <h5 class="p-m-0">Usuários</h5>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" [(ngModel)]="usuarioFiltro.nome" placeholder="Entre com o nome..." />
+                </span>
+                <button pButton type="button" icon="ui-icon-search" label="Pesquisar" (click)="loadUsuariosByPage(dt)"></button>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="colgroup" let-columns>
+          <colgroup *ngFor="let col of columns">
+              <col [ngStyle]="{width: col.width}" />
+          </colgroup>
+        </ng-template>
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th id="column" *ngFor="let col of columns" [pSortableColumn]="col.sort">
+                    {{col.label}}
+                    <p-sortIcon [field]="col.field"></p-sortIcon>
+                </th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-usuario>
+            <tr>
+                <td>{{usuario.id}}</td>
+                <td>{{usuario.nome}}</td>
+                <td>
+                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" (click)="editUsuario(usuario)"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteUsuario(usuario)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td [attr.colspan]="3">
+                    Nenhum resultado encontrado
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                No total, existem {{usuarios ? usuarios.length : 0 }} usuarios.
+            </div>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="usuarioDialog" [style]="{width: '450px'}" header="Usuário Detalhes" [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="p-field">
+            <label for="nome">Nome</label>
+            <input type="text" pInputText id="nome" [(ngModel)]="usuario.nome" required autofocus />
+            <small class="p-invalid" *ngIf="submitted && !usuario.nome">Nome é obrigatório.</small>
+            <small class="p-invalid" *ngIf="submitted && usuario.nome.length > 50">Nome tamanho máximo é de 50 caracteres.</small>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Salvar" icon="pi pi-check" class="p-button-text" (click)="saveUsuario()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
