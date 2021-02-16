@@ -1,0 +1,104 @@
+<p-toast></p-toast>
+
+<div class="card my-5">
+  <h3>Usuário Detalhes</h3>
+  <div class="card-body">
+    <form #usuarioForm="ngForm" (ngSubmit)="saveUsuario()">
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="nome">Nome</label>
+          <input type="text" pInputText id="nome" name="nome" class="form-control" [(ngModel)]="usuario.nome" placeholder="Nome" required />
+          <small id="nomeHelp" *ngIf="usuarioForm.controls['nome'] && !usuarioForm.controls['nome'].valid && (usuarioForm.controls['nome'].touched || usuarioForm.submitted)" class="form-text text-muted">Nome é obrigatório.</small>
+        </div>
+
+        <div class="form-group col-md-4">
+          <label for="cpf">CPF</label>
+          <input type="text" p-inputMask id="cpf" name="cpf" class="form-control" [(ngModel)]="usuario.cpf" mask="999.999.999-99" placeholder="CPF" required />
+          <small id="cpfHelp" *ngIf="usuarioForm.controls['cpf'] && !usuarioForm.controls['cpf'].valid && (usuarioForm.controls['cpf'].touched || usuarioForm.submitted)" class="form-text text-muted">CPF é obrigatório.</small>
+        </div>
+
+        <div class="form-group col-md-2">
+          <label for="dataNascimento">Data de Nascimento</label>
+          <p-calendar id="dataNascimento" name="dataNascimento" [(ngModel)]="usuario.dataNascimento"
+            showButtonBar="true" dateFormat="dd/mm/yy" [showIcon]="true" inputId="icon"></p-calendar>
+        </div>
+
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group col-md-3">
+
+          <label for="sexo">Sexo</label>
+          <p-dropdown id="sexo" name="sexo" class="form-control" [options]="generos" optionLabel="label" optionValue="value" [(ngModel)]="usuario.sexo" placeholder="Selecione o sexo">
+          </p-dropdown>
+
+        </div>
+
+        <div class="form-group col-md-9">
+          <label for="cargo">Cargo</label>
+          <p-dropdown id="cargo" name="cargo" class="form-control" emptyFilterMessage="Nenhum registro encontrado" [options]="cargos" optionLabel="nome" optionValue="id" [(ngModel)]="usuario.cargo.id" placeholder="Selecione um cargo" [filter]="true" required>
+          </p-dropdown>
+          <small id="cargoHelp" *ngIf="usuarioForm.controls['cargo'] && !usuarioForm.controls['cargo'].valid && (usuarioForm.controls['cargo'].touched || usuarioForm.submitted)" class="form-text text-muted">Cargo é obrigatório.</small>
+        </div>
+
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group col-md-9">
+
+          <label for="perfil">Perfil</label>
+          <p-dropdown id="perfil" name="perfil" class="form-control" emptyFilterMessage="Nenhum registro encontrado" [options]="perfis" optionLabel="nome" optionValue="id" [(ngModel)]="selectedPerfil" placeholder="Selecione um perfil" [filter]="true">
+          </p-dropdown>
+          <small id="perfilHelp" *ngIf="usuarioForm.controls['cargo'] && !usuarioForm.controls['cargo'].valid && (usuarioForm.controls['cargo'].touched || usuarioForm.submitted)" class="form-text text-muted">Cargo é obrigatório.</small>
+
+        </div>
+
+        <div class="form-group col-md-3">
+          <button pButton pRipple label="Adicionar" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="addPerfil(selectedPerfil)"></button>
+        </div>
+
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group col-md-12">
+          <p-table #dt [value]="usuario.perfis" [rows]="10" [paginator]="true" dataKey="id" responsive="true" [showCurrentPageReport]="true">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th>#</th>
+                    <th>Nome</th>
+                    <th></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-perfil>
+                <tr>
+                    <td>{{perfil.id}}</td>
+                    <td>{{perfil.nome}}</td>
+                    <td>
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deletePerfil(perfil)"></button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td [attr.colspan]="3">
+                        Nenhum resultado encontrado
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+                <div class="p-d-flex p-ai-center p-jc-between">
+                    No total, existem {{usuarios ? usuarios.length : 0 }} usuarios.
+                </div>
+            </ng-template>
+        </p-table>
+        </div>
+
+      </div>
+
+      <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+  </div>
+</div>

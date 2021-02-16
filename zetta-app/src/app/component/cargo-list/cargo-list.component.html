@@ -7,9 +7,9 @@
         </ng-template>
     </p-toolbar>
 
-    <p-table #dt [value]="cargos" [rows]="10" [paginator]="true"
-        [rowHover]="true" dataKey="codigo" [totalRecords]="totalRecords"
-        [loading]="loading" [lazy]="true" (onLazyLoad)="loadCargosByPage($event)"
+    <p-table #dt [value]="cargos" [rows]="10" [paginator]="true" [columns]="colunas"
+        [rowHover]="true" dataKey="id" [totalRecords]="totalRecords" responsive="true"
+        [lazy]="true" (onLazyLoad)="loadCargosByPage($event)"
         currentPageReportTemplate="Exibindo {first} à {last} de {totalRecords} registro(s)" [showCurrentPageReport]="true">
         <ng-template pTemplate="caption">
             <div class="p-d-flex p-ai-center p-jc-between">
@@ -21,10 +21,17 @@
                 <button pButton type="button" icon="ui-icon-search" label="Pesquisar" (click)="loadCargosByPage(dt)"></button>
             </div>
         </ng-template>
-        <ng-template pTemplate="header">
+        <ng-template pTemplate="colgroup" let-columns>
+          <colgroup *ngFor="let col of columns">
+              <col [ngStyle]="{width: col.width}" />
+          </colgroup>
+        </ng-template>
+        <ng-template pTemplate="header" let-columns>
             <tr>
-                <th># </th>
-                <th>Nome </th>
+                <th id="column" *ngFor="let col of columns" [pSortableColumn]="col.sort">
+                    {{col.label}}
+                    <p-sortIcon [field]="col.field"></p-sortIcon>
+                </th>
                 <th></th>
             </tr>
         </ng-template>
@@ -37,6 +44,13 @@
                     <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteCargo(cargo)"></button>
                 </td>
             </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+              <td [attr.colspan]="3">
+                  Nenhum resultado encontrado
+              </td>
+          </tr>
         </ng-template>
         <ng-template pTemplate="summary">
             <div class="p-d-flex p-ai-center p-jc-between">

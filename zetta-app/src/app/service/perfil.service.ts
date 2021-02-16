@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Perfil } from '../model/perfil';
 import { Observable } from 'rxjs';
+import { Pageable } from '../util/pageable';
+import { RequestUtil } from '../shared/request-util';
 
 @Injectable({
   providedIn: 'root'
@@ -14,19 +16,15 @@ export class PerfilService  {
     this.perfisUrl = 'http://localhost:8080/api/perfil';
   }
 
-  /*
-  findAllPerfis(): Observable<Perfil[]> {
-    return this.http.get<Perfil[]>(`${this.perfisUrl}/all`);
+  findAll(): Observable<Perfil[]> {
+    return this.http.get<Perfil[]>(this.perfisUrl);
   }
-  */
 
-  findAll(nome: string, pageNumber: number, pageSize: number): Observable<any> {
-    let params = new HttpParams();
+ findByNome(nome: string, pageable?: Pageable): Observable<any> {
+    let params = RequestUtil.getRequestParams( pageable )
     params = params.append('nome', nome);
-    params = params.append('page', pageNumber.toString());
-    params = params.append('size', pageSize.toString());
 
-    return this.http.get<any>(this.perfisUrl, { params: params });
+    return this.http.get<any>(`${this.perfisUrl}/filtrar`, { params: params });
   }
 
   findById(id: number): Observable<Perfil> {
