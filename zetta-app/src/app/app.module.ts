@@ -12,14 +12,12 @@ import { CargoListComponent } from './component/cargo-list/cargo-list.component'
 import { PerfilListComponent } from './component/perfil-list/perfil-list.component';
 import { UsuarioListComponent } from './component/usuario-list/usuario-list.component';
 import { PipesModule } from './pipes/pipes.module';
-import { UsuarioFormComponent } from './component/usuario-form/usuario-form.component';
 @NgModule({
   declarations: [
     AppComponent,
     CargoListComponent,
     PerfilListComponent,
-    UsuarioListComponent,
-    UsuarioFormComponent
+    UsuarioListComponent
   ],
   imports: [
     BrowserModule,

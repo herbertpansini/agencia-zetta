@@ -3,7 +3,7 @@
 <div class="card">
     <p-toolbar styleClass="p-mb-4">
         <ng-template pTemplate="left">
-            <button pButton pRipple label="Adicionar novo usuário" icon="pi pi-plus" class="p-button-success p-mr-2" routerLink="/addusuarios"></button>
+            <button pButton pRipple label="Adicionar novo usuário" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="openNew()"></button>
         </ng-template>
     </p-toolbar>
 
@@ -16,13 +16,13 @@
                 <h5 class="p-m-0">Usuários</h5>
                 <div class="p-field" [ngClass]="{'filled': usuarioFiltro.cargo}">
                   <div class="ui-float-label">
-                    <p-dropdown emptyFilterMessage="Nenhum registro encontrado" [options]="cargos" optionLabel="nome" optionValue="id" [(ngModel)]="usuarioFiltro.cargo" (onChange)="loadUsuariosByPage(dt)" placeholder="Selecione um cargo" [filter]="true" required>
+                    <p-dropdown emptyFilterMessage="Nenhum registro encontrado" [options]="cargos" optionLabel="nome" optionValue="id" placeholder="Selecione um cargo" [filter]="true" required>
                     </p-dropdown>
                   </div>
                 </div>
                 <span class="p-input-icon-left">
                     <i class="pi pi-search"></i>
-                    <input pInputText type="text" [(ngModel)]="usuarioFiltro.nome" placeholder="Entre com o nome..." />
+                    <input pInputText type="text" placeholder="Entre com o nome..." />
                 </span>
                 <button pButton type="button" icon="ui-icon-search" label="Pesquisar" (click)="loadUsuariosByPage(dt)"></button>
             </div>
@@ -57,7 +57,7 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
             <tr>
-                <td [attr.colspan]="3">
+                <td [attr.colspan]="7">
                     Nenhum resultado encontrado
                 </td>
             </tr>
@@ -69,5 +69,93 @@
         </ng-template>
     </p-table>
 </div>
+
+<p-dialog [(visible)]="usuarioDialog"  [style]="{width: '600px'}" [contentStyle]="{minHeight: '800px'}" header="Usuário Detalhes" [modal]="true" styleClass="p-fluid">
+  <ng-template pTemplate="content">
+      <div class="p-formgrid p-grid">
+
+          <div class="p-field">
+              <label for="nome">Nome</label>
+              <input type="text" pInputText id="nome" [(ngModel)]="usuario.nome" required autofocus />
+              <small class="p-error" *ngIf="submitted && !usuario.nome">Nome é obrigatório.</small>
+          </div>
+
+          <div class="p-field">
+              <label for="cpf">CPF</label>
+              <p-inputMask id="cpf" name="cpf" mask="999.999.999-99" [unmask]="false" [(ngModel)]="usuario.cpf" required>
+              </p-inputMask>
+              <small class="p-error" *ngIf="submitted && !usuario.cpf">CPF é obrigatório.</small>
+          </div>
+
+          <div class="p-field">
+            <label for="dataNascimento">Data de Nascimento</label>
+            <p-calendar id="dataNascimento" [(ngModel)]="usuario.dataNascimento" showButtonBar="true" dateFormat="dd/mm/yy" [showIcon]="true" inputId="icon">
+            </p-calendar>
+        </div>
+
+        <div class="p-field">
+          <label for="sexo">Sexo</label>
+          <p-dropdown id="sexo" name="sexo" [options]="generos" optionLabel="label" optionValue="value" [(ngModel)]="usuario.sexo" placeholder="Selecione o sexo">
+          </p-dropdown>
+        </div>
+
+        <div class="p-field" [ngClass]="{'filled': usuario.cargo.id}">
+          <label for="cargo">Cargo</label>
+          <p-dropdown id="cargo" emptyFilterMessage="Nenhum registro encontrado" [options]="cargos" optionLabel="nome" optionValue="id" [(ngModel)]="usuario.cargo.id" placeholder="Selecione um cargo" [filter]="true" required>
+          </p-dropdown>
+          <small class="p-error" *ngIf="submitted && !usuario.cargo.id">Cargo é obrigatório.</small>
+        </div>
+
+        <div class="p-field" [ngClass]="{'filled': selectedPerfil}">
+          <label for="perfil">Perfil</label>
+          <p-dropdown id="perfil" emptyFilterMessage="Nenhum registro encontrado" [options]="perfis" optionLabel="nome" optionValue="id" [(ngModel)]="selectedPerfil" placeholder="Selecione um perfil" [filter]="true">
+          </p-dropdown>
+        </div>
+
+        <div class="p-field">
+          <button pButton pRipple label="Adicionar" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="addPerfil(selectedPerfil)"></button>
+        </div>
+
+        <div class="p-field">
+          <p-table #dtPerfil [value]="usuario.perfis" [rows]="10" [paginator]="true" dataKey="id" responsive="true" [showCurrentPageReport]="true">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th>#</th>
+                    <th>Nome</th>
+                    <th></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-perfil>
+                <tr>
+                    <td>{{perfil.id}}</td>
+                    <td>{{perfil.nome}}</td>
+                    <td>
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deletePerfil(perfil)"></button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td [attr.colspan]="3">
+                        Nenhum resultado encontrado
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+                <div class="p-d-flex p-ai-center p-jc-between">
+                    No total, existem {{usuarios ? usuarios.length : 0 }} usuarios.
+                </div>
+            </ng-template>
+        </p-table>
+        </div>
+
+      </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+      <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+      <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveUsuario()"></button>
+  </ng-template>
+</p-dialog>
 
 <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

@@ -167,35 +167,42 @@ export class UsuarioListComponent implements OnInit {
   saveUsuario() {
       this.submitted = true;
 
-      if (this.usuario.nome.trim()) {
-          if (this.usuario.id) {
-              this.blockUI.start(MensagemUtil.BLOCKUI_ATUALIZANDO);
-              this.usuarioService.update(this.usuario.id, this.usuario).pipe(finalize(() => this.blockUI.stop()))
-              .subscribe(response => {
-                this.usuario = response;
-                this.usuarios[this.findIndexById(this.usuario.id)] = this.getUsuarioItem(this.usuario);
-                this.messageService.add({severity: ConstantUtil.SEVERITY_SUCCESS, summary: ConstantUtil.SUMMARY_SUCCESSFUL, detail: MensagemUtil.USUARIO_ATUALIZADO, life: ConstantUtil.LIFE});
-                this.closeDialog();
-              },
-              (err) => {
-                let {error} = err;
-                  this.messageService.add({severity: ConstantUtil.SEVERITY_ERROR, summary: ConstantUtil.SUMMARY_ERROR, detail: error.message, life: ConstantUtil.LIFE});
-              });
-          } else {
-              this.blockUI.start(MensagemUtil.BLOCKUI_SALVANDO);
-              this.usuarioService.save(this.usuario).pipe(finalize(() => this.blockUI.stop()))
-              .subscribe(response => {
-                this.usuario = response;
-                this.usuarios.push(this.getUsuarioItem(this.usuario));
-                this.messageService.add({severity: ConstantUtil.SEVERITY_SUCCESS, summary: ConstantUtil.SUMMARY_SUCCESSFUL, detail: MensagemUtil.USUARIO_CADASTRADO, life: ConstantUtil.LIFE});
-                this.closeDialog();
-              },
-              (err) => {
-                let {error} = err;
-                  this.messageService.add({severity: ConstantUtil.SEVERITY_ERROR, summary: ConstantUtil.SUMMARY_ERROR, detail: error.message, life: ConstantUtil.LIFE});
-              });
-          }
+      if (!this.validateForm()) {
+        this.messageService.add({severity: ConstantUtil.SEVERITY_ERROR, summary: ConstantUtil.SUMMARY_ERROR, detail: MensagemUtil.CAMPO_OBRIGATORIO, life: ConstantUtil.LIFE});
+      } else {
+        this.usuario.cpf = this.usuario.cpf.replace('.', '').replace('.', '').replace('-', '');
+        if (this.usuario.id) {
+            this.blockUI.start(MensagemUtil.BLOCKUI_ATUALIZANDO);
+            this.usuarioService.update(this.usuario.id, this.usuario).pipe(finalize(() => this.blockUI.stop()))
+            .subscribe(response => {
+              this.usuario = response;
+              this.usuarios[this.findIndexById(this.usuario.id)] = this.getUsuarioItem(this.usuario);
+              this.messageService.add({severity: ConstantUtil.SEVERITY_SUCCESS, summary: ConstantUtil.SUMMARY_SUCCESSFUL, detail: MensagemUtil.USUARIO_ATUALIZADO, life: ConstantUtil.LIFE});
+              this.closeDialog();
+            },
+            (err) => {
+              let {error} = err;
+                this.messageService.add({severity: ConstantUtil.SEVERITY_ERROR, summary: ConstantUtil.SUMMARY_ERROR, detail: error.message, life: ConstantUtil.LIFE});
+            });
+        } else {
+            this.blockUI.start(MensagemUtil.BLOCKUI_SALVANDO);
+            this.usuarioService.save(this.usuario).pipe(finalize(() => this.blockUI.stop()))
+            .subscribe(response => {
+              this.usuario = response;
+              this.usuarios.push(this.getUsuarioItem(this.usuario));
+              this.messageService.add({severity: ConstantUtil.SEVERITY_SUCCESS, summary: ConstantUtil.SUMMARY_SUCCESSFUL, detail: MensagemUtil.USUARIO_CADASTRADO, life: ConstantUtil.LIFE});
+              this.closeDialog();
+            },
+            (err) => {
+              let {error} = err;
+                this.messageService.add({severity: ConstantUtil.SEVERITY_ERROR, summary: ConstantUtil.SUMMARY_ERROR, detail: error.message, life: ConstantUtil.LIFE});
+            });
+        }
       }
+  }
+
+  validateForm(): boolean {
+    return !(!this.usuario.nome.trim() || !this.usuario.cpf.trim() || !this.usuario.cargo.id);
   }
 
   findIndexById(id: number): number {
