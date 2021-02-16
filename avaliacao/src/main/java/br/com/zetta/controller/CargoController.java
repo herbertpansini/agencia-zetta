@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -29,6 +30,11 @@ public class CargoController {
     private final CargoService cargoService;
 
     @GetMapping
+    public ResponseEntity<List<CargoDto>> findAll() {
+        return ResponseEntity.ok( this.cargoService.findAll() );
+    }
+
+    @GetMapping("/filtrar")
     public ResponseEntity<Page<CargoDto>> findByNome(@RequestParam(value = "nome", required = false, defaultValue = "") String nome, Pageable pageable) {
         return ResponseEntity.ok( this.cargoService.findByNome(nome, pageable) );
     }

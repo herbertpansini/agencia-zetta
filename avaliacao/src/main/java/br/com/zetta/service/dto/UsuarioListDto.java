@@ -17,6 +17,7 @@ public class UsuarioListDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
+    private LocalDate dataCadastro;
     private String nome;
     private String cpf;
     private LocalDate dataNascimento;

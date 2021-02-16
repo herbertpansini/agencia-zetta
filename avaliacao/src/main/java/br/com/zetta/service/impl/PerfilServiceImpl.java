@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -21,6 +23,12 @@ public class PerfilServiceImpl implements PerfilService {
 
     private final PerfilMapper perfilMapper;
     private final PerfilRepository perfilRepository;
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PerfilDto> findAll() {
+        return this.perfilMapper.toDto( this.perfilRepository.findAll() );
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -32,7 +40,7 @@ public class PerfilServiceImpl implements PerfilService {
     @Transactional(readOnly = true)
     public PerfilDto findById(Long id) {
         return this.perfilMapper.toDto( this.perfilRepository.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NO_CONTENT, String.format("perfil.notfound", id))) );
+                new ResponseStatusException(HttpStatus.NO_CONTENT, "not.found")) );
     }
 
     @Override
@@ -57,13 +65,13 @@ public class PerfilServiceImpl implements PerfilService {
 
     private void isBeingUsed(Long id) {
         if (this.perfilRepository.isBeingUsed(id) > 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("perfil.isbeingused", id));
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "is.being.used");
         }
     }
 
     private void validate(PerfilDto perfilDto) {
         if (this.validateNome(perfilDto)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("perfil.already.exist", perfilDto.getNome()));
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "already.exist");
         }
     }
 

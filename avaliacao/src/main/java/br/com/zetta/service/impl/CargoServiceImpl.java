@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -21,6 +23,12 @@ public class CargoServiceImpl implements CargoService {
 
     private final CargoMapper cargoMapper;
     private final CargoRepository cargoRepository;
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CargoDto> findAll() {
+        return this.cargoMapper.toDto( this.cargoRepository.findAll() );
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -32,7 +40,7 @@ public class CargoServiceImpl implements CargoService {
     @Transactional(readOnly = true)
     public CargoDto findById(Long id) {
         return this.cargoMapper.toDto( this.cargoRepository.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NO_CONTENT, String.format("cargo.notfound", id))) );
+                new ResponseStatusException(HttpStatus.NO_CONTENT, "not.found")) );
     }
 
     @Override
@@ -57,13 +65,13 @@ public class CargoServiceImpl implements CargoService {
 
     private void isBeingUsed(Long id) {
         if (this.cargoRepository.isBeingUsed(id) > 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("cargo.isbeingused", id));
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "is.being.used");
         }
     }
 
     private void validate(CargoDto cargoDto) {
         if (this.validateNome(cargoDto)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("cargo.already.exist", cargoDto.getNome()));
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "already.exist");
         }
     }
 

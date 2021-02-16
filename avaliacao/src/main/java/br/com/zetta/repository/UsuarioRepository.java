@@ -13,8 +13,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
+    Usuario findByCpf(String cpf);
+
     @Query("SELECT new br.com.zetta.service.dto.UsuarioListDto( " +
             "u.id, " +
+            "u.dataCadastro, " +
             "u.nome, " +
             "u.cpf, " +
             "u.dataNascimento, " +

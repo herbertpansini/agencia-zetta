@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -29,6 +30,11 @@ public class PerfilController {
     private final PerfilService perfilService;
 
     @GetMapping
+    public ResponseEntity<List<PerfilDto>> findAll() {
+        return ResponseEntity.ok( this.perfilService.findAll() );
+    }
+
+    @GetMapping("/filtrar")
     public ResponseEntity<Page<PerfilDto>> findByNome(@RequestParam(value = "nome", required = false, defaultValue = "") String nome, Pageable pageable) {
         return ResponseEntity.ok( this.perfilService.findByNome(nome, pageable) );
     }

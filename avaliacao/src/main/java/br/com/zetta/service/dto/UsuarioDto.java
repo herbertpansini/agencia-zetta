@@ -19,6 +19,8 @@ public class UsuarioDto implements Serializable {
     @Id
     private Long id;
 
+    private LocalDate dataCadastro;
+
     @NotNull
     private String nome;
 
