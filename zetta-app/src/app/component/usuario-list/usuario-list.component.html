@@ -14,17 +14,13 @@
         <ng-template pTemplate="caption">
             <div class="p-d-flex p-ai-center p-jc-between">
                 <h5 class="p-m-0">Usuários</h5>
-                <div class="p-field" [ngClass]="{'filled': usuarioFiltro.cargo}">
-                  <div class="ui-float-label">
-                    <p-dropdown emptyFilterMessage="Nenhum registro encontrado" [options]="cargos" optionLabel="nome" optionValue="id" placeholder="Selecione um cargo" [filter]="true" required>
-                    </p-dropdown>
-                  </div>
-                </div>
-                <span class="p-input-icon-left">
-                    <i class="pi pi-search"></i>
-                    <input pInputText type="text" placeholder="Entre com o nome..." />
-                </span>
-                <button pButton type="button" icon="ui-icon-search" label="Pesquisar" (click)="loadUsuariosByPage(dt)"></button>
+                  <p-dropdown emptyFilterMessage="Nenhum registro encontrado" [(ngModel)]="usuarioFiltro.cargo" [options]="cargos" optionLabel="nome" optionValue="id" placeholder="Selecione um cargo" [filter]="true">
+                  </p-dropdown>&nbsp;
+                  <span class="p-input-icon-left">
+                      <i class="pi pi-search"></i>
+                      <input pInputText type="text" [(ngModel)]="usuarioFiltro.nome" placeholder="Entre com o nome..." />
+                  </span>
+                  <button pButton type="button" icon="ui-icon-search" label="Pesquisar" (click)="loadUsuariosByPage(dt)"></button>
             </div>
         </ng-template>
         <ng-template pTemplate="colgroup" let-columns>
